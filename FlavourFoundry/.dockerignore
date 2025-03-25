@@ -1,0 +1,7 @@
+node_modules
+Donation
+archive
+target/
+src/test/
+.git
+.vercel

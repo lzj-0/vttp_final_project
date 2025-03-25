@@ -1,0 +1,86 @@
+@if (authService.isLoggedIn()) {
+<header class="text-gray-100 body-font fixed top-0 w-full z-50 bg-gray-900 shadow-md">
+  <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center" bis_skin_checked="1">
+    <!-- Left Side Navigation -->
+    <nav class="flex lg:w-2/5 flex-wrap items-center text-base">
+      <a class="mr-5 hover:text-yellow-400" href="#">Home</a>
+      <a class="mr-5 hover:text-yellow-400" href="#about">About Us</a>
+
+      <!-- Dropdown for Recipes -->
+      <div class="relative group mr-5">
+
+        <button class="hover:text-yellow-400 focus:outline-none flex items-center cursor-pointer"
+          [routerLink]="['/main']">
+          Recipes <span class="ml-1">&#9660;</span>
+        </button>
+
+        <div
+          class="absolute right-0 mt-2 w-30 bg-gray-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+          <a class="block px-4 py-2 text-gray-100 hover:bg-gray-700 hover:text-yellow-400" [routerLink]="['/main']">Main
+            Menu</a>
+          <a class="block px-4 py-2 text-gray-100 hover:bg-gray-700 hover:text-yellow-400"
+            [routerLink]="['/recipes']">Catalogue</a>
+          <a class="block px-4 py-2 text-gray-100 hover:bg-gray-700 hover:text-yellow-400"
+            [routerLink]="['/addrecipe']">Add Recipe</a>
+        </div>
+      </div>
+
+      <a class="mr-5 hover:text-yellow-400" [routerLink]="['calorietracker']">Calorie Tracker</a>
+      <a class="mr-5 hover:text-yellow-400" [routerLink]="['leaderboard']">Leaderboard</a>
+    </nav>
+
+    <!-- Center Logo -->
+    <a
+      class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
+      <span
+        class="ml-3 text-xl font-bold text-transparent quicksand-font bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text">Flavour
+        Foundry</span>
+    </a>
+
+    <!-- Right Side Navigation -->
+    <div class="lg:w-2/5 inline-flex lg:justify-end items-center lg:ml-0" bis_skin_checked="1">
+      <a class="mr-5 hover:text-yellow-400" [routerLink]="['subscription']">Subscription</a>
+      <a class="mr-5 hover:text-yellow-400" [routerLink]="['tutorial']">Get Started</a>
+      <a class="inline-flex items-center text-gray-100 hover:text-yellow-400 mr-5 cursor-pointer"
+        [routerLink]="['/profile', authService.getUserId()]">Profile</a>
+      <button (click)="logout()"
+        class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-400 rounded text-base text-black mt-4 md:mt-0 cursor-pointer">Log
+        Out</button>
+    </div>
+  </div>
+</header>
+<div class="mt-18 flex justify-center">
+  <app-profile-avatar></app-profile-avatar>
+</div>
+} @else {
+
+<header class="text-gray-100 body-font fixed top-0 w-full z-50 bg-gray-900 shadow-md">
+  <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center" bis_skin_checked="1">
+    <nav class="flex lg:w-2/5 flex-wrap items-center text-base">
+      <a class="mr-5 hover:text-yellow-400" href="#">Home</a>
+      <a class="mr-5 hover:text-yellow-400" href="#about">About Us</a>
+      <a class="mr-5 hover:text-yellow-400" [routerLink]="['recipes']">Explore Recipes</a>
+      <a class="mr-5 hover:text-yellow-400" [routerLink]="['subscription']">Subscription</a>
+    </nav>
+
+    <a
+      class="flex order-first lg:order-none lg:w-1/5 title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
+      <span
+        class="ml-3 text-xl font-bold text-transparent quicksand-font bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text">Flavour
+        Foundry</span>
+    </a>
+
+    <div class="lg:w-2/5 inline-flex lg:justify-end items-center lg:ml-0" bis_skin_checked="1">
+      <button
+        class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-400 rounded text-base text-black mt-4 md:mt-0 mr-3 cursor-pointer"
+        [routerLink]="['login']">Login
+      </button>
+      <button
+        class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-400 rounded text-base text-black mt-4 md:mt-0 mr-3 cursor-pointer"
+        [routerLink]="['register']">Sign Up
+      </button>
+    </div>
+  </div>
+</header>
+}
+<router-outlet></router-outlet>

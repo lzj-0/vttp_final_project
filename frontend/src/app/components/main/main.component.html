@@ -1,0 +1,363 @@
+<div class="bg-white">
+    @if (loggedInUser && levelDetail && newRecipes && trendingRecipes) {
+    <!-- Hero Section -->
+    <ng-container>
+        <div class="bg-cover bg-center h-screen flex items-center justify-center relative"
+            style="background-image: url('https://ffo.sgp1.digitaloceanspaces.com/misc/background.jpg');">
+
+            <div class="absolute inset-0 bg-opacity-50"></div>
+            <div class="text-center relative z-10">
+                <h1 class="text-6xl font-bold mb-4 text-blue-800 drop-shadow-lg">Welcome {{ loggedInUser.name }}!</h1>
+                <p class="text-2xl mb-8 font-bold text-blue-900">Level up your cooking skills and unlock delicious
+                    recipes.</p>
+
+                <div class="flex justify-center space-x-4">
+                    <!-- Start Exploring Button -->
+                    <button
+                        class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-3 rounded-full font-semibold hover:from-yellow-600 hover:to-yellow-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
+                        [routerLink]="['/recipes']">
+                        Start Exploring
+                    </button>
+                    <!-- Upload Your Recipe Button -->
+                    <button
+                        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl"
+                        [routerLink]="['/addrecipe']">
+                        Upload Your Recipe
+                    </button>
+                </div>
+            </div>
+
+            <div #scrollIndicator
+                class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-xl md:text-2xl animate-bounce mb-10">
+                Scroll down ↓
+            </div>
+        </div>
+
+        <!-- User Progress Section -->
+        <div class="container mx-auto px-4 py-5">
+            <div class="bg-gray-100 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h2 class="text-2xl font-bold mb-4">Your Progress</h2>
+                <div class="flex items-center space-x-4">
+
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-yellow-500 shadow-lg">
+                        <img [src]="loggedInUser.imageUrl" alt="Badge" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-600">Level {{ loggedInUser.level }}</p>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
+                            <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 h-3 rounded-full"
+                                [style.width]="((loggedInUser.exp - levelDetail.min_exp) / (levelDetail.max_exp - levelDetail.min_exp + 1)) * 100 + '%'">
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">{{ loggedInUser.exp - levelDetail.min_exp }} / {{
+                            levelDetail.max_exp - levelDetail.min_exp + 1 }} EXP</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 flex items-center space-x-2">
+                    <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                        </path>
+                    </svg>
+                    <p class="text-gray-600">Earn {{ levelDetail.max_exp + 1 - loggedInUser.exp }} XP to reach the level
+                        {{
+                        loggedInUser.level + 1 }}!</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Trending Recipes Section -->
+        @if (trendingRecipes) {
+        <div class="container mx-auto px-4 py-12">
+            <h2 class="text-3xl font-bold mb-8">🔥Trending Recipes🔥</h2>
+            <div
+                class="relative p-4 rounded-lg recipe-container border-2 border-yellow-500 shadow-[0_0_20px_5px_rgba(255,199,0,0.3)]">
+                @if (trendingRecipes.length > 0) {
+                <div class="overflow-x-hidden whitespace-nowrap hide-scrollbar">
+                    <div class="flex space-x-4" [ngClass]="{ 'animate-scroll': trendingRecipes.length > 4 }">
+
+                        @for (recipe of trendingRecipes; track $index) {
+                        <div class="flex-shrink-0 w-64">
+                            <!-- Recipe Card -->
+                            <div class="h-full bg-white border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                [routerLink]="isRecipeRestricted(recipe) && !isOwner(recipe) ? null : ['/recipe', recipe._id.$oid]">
+                                <div class="h-full border-3 border-gray-200 border-opacity-60 rounded-lg overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                    [ngClass]="{
+                                            'border-yellow-700': recipe.ownerTier === 'Bronze',
+                                            'border-gray-400': recipe.ownerTier === 'Silver',
+                                            'border-yellow-400': recipe.ownerTier === 'Gold',
+                                            'border-blue-300': recipe.ownerTier === 'Diamond',
+                                            'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
+                                            'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                            'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                          }">
+                                    <img class="lg:h-60 md:h-36 w-full object-cover object-center"
+                                        [src]="recipe.imageUrl" alt="blog">
+                                    <div class="p-6">
+                                        <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{{
+                                            recipe.cuisine | uppercase }}</h2>
+                                        <div class="min-h-[3.5rem] mb-1">
+                                            <h1
+                                                class="title-font text-lg font-medium text-gray-900 break-words whitespace-normal line-clamp-2">
+                                                {{ recipe.title | titlecase }}
+                                            </h1>
+                                        </div>
+                                        <div class="mb-2">
+                                            <app-star-rating [averageRating]="recipe.averageRating">
+                                            </app-star-rating>
+                                        </div>
+                                        <div class="flex items-center flex-wrap">
+                                            <span
+                                                class="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>{{ recipe.views }}
+                                            </span>
+                                            <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                                                    </path>
+                                                </svg>{{ recipe.reviews }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        <!-- Duplicate recipe cards for seamless looping -->
+                        @if (trendingRecipes.length > 4) {
+                        @for (recipe of trendingRecipes; track $index) {
+                        <div class="flex-shrink-0 w-64">
+                            <!-- Recipe Card -->
+                            <div class="h-full bg-white border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                [routerLink]="isRecipeRestricted(recipe) && !isOwner(recipe) ? null : ['/recipe', recipe._id.$oid]">
+                                <div class="h-full border-3 border-gray-200 border-opacity-60 rounded-lg overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                    [ngClass]="{
+                                                'border-yellow-700': recipe.ownerTier === 'Bronze',
+                                                'border-gray-400': recipe.ownerTier === 'Silver',
+                                                'border-yellow-400': recipe.ownerTier === 'Gold',
+                                                'border-blue-300': recipe.ownerTier === 'Diamond',
+                                                'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
+                                                'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                                'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                              }">
+                                    <img class="lg:h-60 md:h-36 w-full object-cover object-center"
+                                        [src]="recipe.imageUrl" alt="blog">
+                                    <div class="p-6">
+                                        <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{{
+                                            recipe.cuisine | uppercase }}</h2>
+                                        <div class="min-h-[3.5rem] mb-1">
+                                            <h1
+                                                class="title-font text-lg font-medium text-gray-900 break-words whitespace-normal line-clamp-2">
+                                                {{ recipe.title | titlecase }}
+                                            </h1>
+                                        </div>
+                                        <div class="mb-2">
+                                            <app-star-rating [averageRating]="recipe.averageRating">
+                                            </app-star-rating>
+                                        </div>
+                                        <div class="flex items-center flex-wrap">
+                                            <span
+                                                class="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>{{ recipe.views }}
+                                            </span>
+                                            <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                                                    </path>
+                                                </svg>{{ recipe.reviews }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        }
+                    </div>
+                </div>
+                } @else {
+
+                <div class="flex items-center justify-center">
+                    <div class="w-64">
+                        <div class="h-full bg-white rounded-lg overflow-hidden">
+                            <div class="p-6 flex flex-col items-center justify-center h-full">
+                                <p class="text-gray-400 text-center">No trending recipes available.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- New Recipes Section -->
+        @if (newRecipes) {
+        <div class="container mx-auto px-4 py-12">
+            <h2 class="text-3xl font-bold mb-8">✨New Recipes✨</h2>
+            <div
+                class="relative p-4 rounded-lg recipe-container border-2 border-blue-500 shadow-[0_0_20px_5px_rgba(0,123,255,0.3)]">
+                @if (newRecipes.length > 0) {
+                <div class="overflow-x-hidden whitespace-nowrap hide-scrollbar">
+                    <div class="flex space-x-4" [ngClass]="{ 'animate-scroll': newRecipes.length > 4 }">
+
+                        @for (recipe of newRecipes; track $index) {
+                        <div class="flex-shrink-0 w-64">
+                            <!-- Recipe Card -->
+                            <div class="h-full bg-white border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                [routerLink]="isRecipeRestricted(recipe) && !isOwner(recipe) ? null : ['/recipe', recipe._id.$oid]">
+                                <div class="h-full border-3 border-gray-200 border-opacity-60 rounded-lg overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                    [ngClass]="{
+                                                'border-yellow-700': recipe.ownerTier === 'Bronze',
+                                                'border-gray-400': recipe.ownerTier === 'Silver',
+                                                'border-yellow-400': recipe.ownerTier === 'Gold',
+                                                'border-blue-300': recipe.ownerTier === 'Diamond',
+                                                'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
+                                                'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                                'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                              }">
+                                    <img class="lg:h-60 md:h-36 w-full object-cover object-center"
+                                        [src]="recipe.imageUrl" alt="blog">
+                                    <div class="p-6">
+                                        <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{{
+                                            recipe.cuisine | uppercase }}</h2>
+                                        <div class="min-h-[3.5rem] mb-1">
+                                            <h1
+                                                class="title-font text-lg font-medium text-gray-900 break-words whitespace-normal line-clamp-2">
+                                                {{ recipe.title | titlecase }}
+                                            </h1>
+                                        </div>
+                                        <div class="mb-2">
+                                            <app-star-rating [averageRating]="recipe.averageRating">
+                                            </app-star-rating>
+                                        </div>
+                                        <div class="flex items-center flex-wrap">
+                                            <span
+                                                class="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>{{ recipe.views }}
+                                            </span>
+                                            <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                                                    </path>
+                                                </svg>{{ recipe.reviews }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        <!-- Duplicate recipe cards for seamless looping -->
+                        @if (newRecipes.length > 4) {
+                        @for (recipe of newRecipes; track $index) {
+                        <div class="flex-shrink-0 w-64">
+                            <!-- Recipe Card -->
+                            <div class="h-full bg-white border-2 border-gray-200 rounded-lg overflow-hidden cursor-pointer transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                [routerLink]="isRecipeRestricted(recipe) && !isOwner(recipe) ? null : ['/recipe', recipe._id.$oid]">
+                                <div class="h-full border-3 border-gray-200 border-opacity-60 rounded-lg overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105"
+                                    [ngClass]="{
+                                                'border-yellow-700': recipe.ownerTier === 'Bronze',
+                                                'border-gray-400': recipe.ownerTier === 'Silver',
+                                                'border-yellow-400': recipe.ownerTier === 'Gold',
+                                                'border-blue-300': recipe.ownerTier === 'Diamond',
+                                                'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
+                                                'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                                'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                              }">
+                                    <img class="lg:h-60 md:h-36 w-full object-cover object-center"
+                                        [src]="recipe.imageUrl" alt="blog">
+                                    <div class="p-6">
+                                        <h2 class="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">{{
+                                            recipe.cuisine | uppercase }}</h2>
+                                        <div class="min-h-[3.5rem] mb-1">
+                                            <h1
+                                                class="title-font text-lg font-medium text-gray-900 break-words whitespace-normal line-clamp-2">
+                                                {{ recipe.title | titlecase }}
+                                            </h1>
+                                        </div>
+                                        <div class="mb-2">
+                                            <app-star-rating [averageRating]="recipe.averageRating">
+                                            </app-star-rating>
+                                        </div>
+                                        <div class="flex items-center flex-wrap">
+                                            <span
+                                                class="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>{{ recipe.views }}
+                                            </span>
+                                            <span class="text-gray-400 inline-flex items-center leading-none text-sm">
+                                                <svg class="w-4 h-4 mr-1" stroke="currentColor" stroke-width="2"
+                                                    fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                                    viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                                                    </path>
+                                                </svg>{{ recipe.reviews }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        }
+                    </div>
+                </div>
+                } @else {
+
+                <div class="flex items-center justify-center">
+                    <div class="w-64">
+                        <div class="h-full bg-white rounded-lg overflow-hidden">
+                            <div class="p-6 flex flex-col items-center justify-center h-full">
+                                <p class="text-gray-400 text-center">No new recipes available.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- Leaderboard Section -->
+        <app-leaderboard></app-leaderboard>
+    </ng-container>
+    } @else {
+    <div class="flex items-center justify-center h-screen">
+        <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+    </div>
+    }
+</div>

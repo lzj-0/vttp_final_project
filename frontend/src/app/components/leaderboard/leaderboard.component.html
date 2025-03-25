@@ -1,0 +1,72 @@
+<div class="leaderboard-container bg-cover bg-bottom bg-fixed min-h-screen p-8"
+  style="background-image: url('https://ffo.sgp1.digitaloceanspaces.com/misc/leaderboard.jpg');">
+
+  <div class="container mx-auto px-4 py-12 relative z-10">
+    <!-- Leaderboard Title -->
+    <h2
+      class="text-5xl font-bold mb-8 text-center quicksand-font bg-gradient-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg animate-pulse relative">
+      Weekly Leaderboard
+    </h2>
+
+    <!-- Countdown Timer -->
+    <div class="text-center mb-8">
+      <p class="text-lg font-semibold text-yellow-300">Time until next reset:</p>
+      <p class="text-3xl font-bold text-yellow-400">{{ countdown }}</p>
+      <p class="text-sm text-gray-300 mt-2">The leaderboard resets every Sunday at 00:00.</p>
+
+    </div>
+
+
+    <!-- Leaderboard Table -->
+    <div class="flex flex-col space-y-4">
+      @for (entry of leaderboard; track entry.user.id; let i = $index) {
+      <div
+        class="leaderboard-box flex items-center justify-between p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg hover:bg-white/20 hover:shadow-xl transition-all duration-300 cursor-pointer border-3 border-white/20"
+        [ngClass]="{
+            'border-yellow-700': entry.user.tier === 'Bronze',
+            'border-gray-400': entry.user.tier === 'Silver',
+            'border-yellow-400': entry.user.tier === 'Gold',
+            'diamond-glow': entry.user.tier === 'Diamond',
+          }" [routerLink]="['/profile', entry.user.id]">
+
+        <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect rx="8" ry="8" class="line" height="100%" width="100%" stroke-linejoin="round" />
+        </svg>
+        <div class="flex items-center space-x-6">
+          <span [ngClass]="{
+                'text-yellow-400': i === 0,
+                'text-gray-300': i === 1,
+                'text-yellow-600': i === 2,
+                'text-gray-400': i > 2
+              }" class="text-3xl font-bold">
+            {{ i + 1 }}
+          </span>
+
+          <!-- User Avatar -->
+          <img class="w-12 h-12 rounded-full border-2 border-white/30" [src]="entry.user.imageUrl"
+            [alt]="entry.user.name" />
+
+          <div>
+            <p class="text-xl font-semibold text-white" >{{ entry.user.name }}</p>
+            <p class="text-sm text-gray-300">Level {{ entry.user.level }}</p>
+          </div>
+        </div>
+
+        <!-- EXP Earned -->
+        <span [ngClass]="{
+              'text-yellow-400': i === 0,
+              'text-gray-300': i === 1,
+              'text-yellow-600': i === 2,
+              'text-gray-400': i > 2
+            }" class="text-xl font-bold">
+          {{ entry.expEarned }} XP
+        </span>
+      </div>
+      } @empty {
+      <div class="text-center p-6 bg-white/10 backdrop-blur-sm rounded-lg shadow-lg border border-white/20">
+        <p class="text-lg text-gray-300">No data available. Be the first to earn XP!</p>
+      </div>
+      }
+    </div>
+  </div>
+</div>

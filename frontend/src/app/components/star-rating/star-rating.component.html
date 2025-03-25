@@ -1,0 +1,11 @@
+<div class="stars-container">
+  @for (star of stars; track $index) {
+  <div class="star" [ngClass]="{
+          'filled': star === 1,
+          'half': star === 0.5,
+          'empty': star === 0
+        }" (click)="setRating($index + 1)" (mouseover)="hoverRating = $index + 1" (mouseleave)="hoverRating = 0"></div>
+  }
+  <span class="rating-text">{{ displayRating || averageRating | number: '1.0-1' }}</span>
+  <ng-content></ng-content>
+</div>

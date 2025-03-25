@@ -1,0 +1,36 @@
+@keyframes borderAnimation {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: 9000;
+  }
+}
+
+.leaderboard-box {
+  position: relative;
+  overflow: hidden;
+}
+
+.leaderboard-box svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.leaderboard-box .line {
+  stroke-dasharray: 60 830;
+  stroke-width: 4px;
+  fill: transparent;
+  stroke: rgba(255, 215, 0, 0.4);
+  animation: borderAnimation 20s linear infinite;
+}
+
+.diamond-glow {
+  border-color: #6499ed; /* blue-500 */
+  box-shadow: 0 0 15px 5px rgba(102, 158, 248, 0.752);
+}

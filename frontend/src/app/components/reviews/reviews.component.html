@@ -1,0 +1,71 @@
+@if (recipeDetail) {
+<div class="bg-white py-6 sm:py-8 lg:py-12 mt-8">
+
+  <div class="mx-auto max-w-screen-md px-4 md:px-8">
+    <h2 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl xl:mb-12">Recipe Reviews</h2>
+
+    <div class="mb-4 flex items-center justify-between border-t border-b py-4">
+      <div class="flex flex-col gap-0.5">
+        <span class="block font-bold">Total</span>
+
+        <div class="-ml-1 flex gap-0.5">
+          <app-star-rating [averageRating]="recipeDetail.averageRating"></app-star-rating>
+        </div>
+
+        <span class="block text-sm text-gray-500">Based on {{ recipeDetail.reviews }} reviews</span>
+      </div>
+
+      <button (click)="toggleReviewForm()"
+        class="inline-block rounded-lg border bg-white px-4 py-2 text-center text-sm font-semibold text-gray-500 outline-none ring-indigo-300 transition duration-100 hover:bg-gray-100 focus-visible:ring active:bg-gray-200 md:px-8 md:py-3 md:text-base cursor-pointer">
+        {{ isReviewFormVisible ? 'Cancel' : 'Write a review' }}
+      </button>
+    </div>
+
+    @if (isReviewFormVisible) {
+    <form [formGroup]="reviewForm" (submit)="submitReview()" class="mb-8 p-6 bg-gray-50 rounded-lg">
+      <h3 class="text-lg font-bold mb-4">Add Your Review</h3>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Rating</label>
+        <app-star-rating [isInteractive]="true" (ratingSelected)="reviewForm.get('rating')?.setValue($event)"
+          class="cursor-pointer"></app-star-rating>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Comment</label>
+        <textarea formControlName="comment"
+          class="w-full p-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer disabled:bg-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+        [disabled]="reviewForm.invalid">
+        Submit Review
+      </button>
+    </form>
+    }
+
+    <div class="divide-y">
+      @for (review of recipeDetail.reviewsList; track $index) {
+      <div class="flex flex-col gap-3 py-4 md:py-8">
+        <div>
+          <span class="block text-sm font-bold">{{ review.userName }}</span>
+          <span class="block text-sm text-gray-500">{{ review.createdAt * 1000 | date:'medium'}}</span>
+        </div>
+
+        <div class="-ml-1 flex gap-0.5">
+          <app-star-rating [averageRating]="review.rating"></app-star-rating>
+        </div>
+
+        <p class="text-gray-600">{{ review.comment }}</p>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="fixed bottom-4 right-4 z-50">
+    <app-alert [message]="expAlertMessage" [type]="'success'" (close)="clearExpAlert()"></app-alert>
+  </div>
+
+</div>
+}

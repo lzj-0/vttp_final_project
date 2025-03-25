@@ -1,0 +1,62 @@
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 60s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.fiery-border {
+  border: 2px solid transparent;
+  border-image: linear-gradient(to right, #ff7e5f, #feb47b, #ff7e5f);
+  border-image-slice: 1;
+  animation: fiery-glow 1s infinite alternate ease-in-out;
+}
+
+@keyframes fiery-glow {
+  0% {
+    box-shadow: 0 0 15px rgba(255, 126, 95, 0.8), 0 0 30px rgba(254, 180, 123, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 30px rgba(255, 126, 95, 1), 0 0 60px rgba(254, 180, 123, 0.8);
+  }
+}
+
+.shiny-border {
+  border: 2px solid transparent;
+  border-image: linear-gradient(to right, #00c6ff, #0072ff, #00c6ff);
+  border-image-slice: 1;
+  animation: shiny-glow 1s infinite alternate ease-in-out;
+}
+
+@keyframes shiny-glow {
+  0% {
+    box-shadow: 0 0 15px rgba(0, 198, 255, 0.8), 0 0 30px rgba(0, 114, 255, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 30px rgba(0, 198, 255, 1), 0 0 60px rgba(0, 114, 255, 0.8);
+  }
+}
+
+.recipe-container {
+  min-height: 400px;
+}

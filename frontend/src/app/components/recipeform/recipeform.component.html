@@ -1,0 +1,261 @@
+<div class="max-w-full mx-auto px-4">
+
+    <app-back [path]="'/recipes'"></app-back>
+
+    <h1 class="text-4xl font-bold text-center">Add New Recipe</h1>
+    <br>
+    <form [formGroup]="form" enctype="multipart/form-data" (submit)="processForm()">
+        <div class="mb-3 flex flex-col sm:flex-row sm:items-baseline">
+            <label for="title" class="text-gray-700 w-1/6 font-bold">Title:</label>
+            <div class="w-full sm:w-1/4">
+                <input id="title" formControlName="title" placeholder="Name of dish"
+                    class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            @if (formCtrlInvalid('title')) {
+            <p class="text-red-500 ml-4 max-h-[14px]">Title is mandatory</p>
+            }
+        </div>
+        <div class="mb-3 flex flex-col sm:flex-row sm:items-baseline">
+            <label for="cuisine" class="text-gray-700 w-1/6 font-bold">Cuisine:</label>
+            <div class="w-full sm:w-1/4">
+                <select id="cuisine" formControlName="cuisine"
+                    class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">-- Select a Cuisine --</option>
+                    @for (c of cuisines; track $index) {
+                    <option>{{ c | titlecase }}</option>
+                    }
+                    <option>Others</option>
+                </select>
+            </div>
+            <!-- @if (showCustomInput) {
+                <input type="text" placeholder="Enter your cuisine" (change)="typeCustomCuisine($event)">
+            } -->
+            @if (formCtrlInvalid('cuisine')) {
+            <p class="text-red-500 ml-4 max-h-[14px]">Cuisine is mandatory</p>
+            }
+        </div>
+
+        <div class="mb-3">
+            <div class="flex flex-wrap gap-3 sm:gap-6">
+                <label for="meal" class="text-gray-700 sm:w-1/6 font-bold">Meal Type:</label>
+                <div>
+                    <input id="breakfast" type="radio" formControlName="meal" class="hidden peer" value="breakfast">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="breakfast">Breakfast</label>
+                </div>
+
+                <div>
+                    <input id="lunch" type="radio" formControlName="meal" class="hidden peer" value="lunch">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="lunch">Lunch</label>
+                </div>
+
+                <div>
+                    <input id="dinner" type="radio" formControlName="meal" class="hidden peer" value="dinner">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="dinner">Dinner</label>
+                </div>
+
+                <div>
+                    <input id="teabreak" type="radio" formControlName="meal" class="hidden peer" value="teabreak">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="teabreak">Teabreak</label>
+                </div>
+
+                <div>
+                    <input id="snack" type="radio" formControlName="meal" class="hidden peer" value="snack">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="snack">Snack</label>
+                </div>
+
+                <div>
+                    <input id="dessert" type="radio" formControlName="meal" class="hidden peer" value="dessert">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="dessert">Dessert</label>
+                </div>
+
+                <div>
+                    <input id="any" type="radio" formControlName="meal" class="hidden peer" value="any">
+                    <label
+                        class="px-4 py-2 border border-gray-300 bg-gray-200 rounded-full cursor-pointer peer-hover:bg-blue-400 peer-checked:bg-blue-500 peer-checked:text-white"
+                        for="any">Any</label>
+                </div>
+                @if (formCtrlInvalid('meal')) {
+                <p class="text-red-500 ml-4 max-h-[14px]">Meal type is mandatory</p>
+                }
+            </div>
+
+        </div>
+
+        <div class="mb-3 flex flex-col sm:flex-row sm:items-baseline">
+            <label for="servingSize" class="text-gray-700 w-1/6 font-bold">Serving size:</label>
+            <div class="w-full sm:w-1/12">
+                <input id="servingSize" type="number" min="1" formControlName="servingSize"
+                    class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            @if (formCtrlInvalid('servingSize')) {
+            <p class="text-red-500 ml-4 max-h-[14px]">Serving size is mandatory</p>
+            }
+        </div>
+
+        <div class="mb-3">
+            <div class="flex items-baseline gap-4">
+                <label for="ingredients" class="text-gray-700 w-24 font-bold">Ingredients:</label>
+                <button type="button" (click)="addIngField()"
+                    class="gap-2 px-4 py-2 text-white bg-green-600 hover:bg-green-700 cursor-pointer add-btn">
+                    <i class="bi bi-plus-circle"></i> Add More Ingredients
+                </button>
+                @if (ingInvalid()) {
+                <p class="text-red-500 ml-4 max-h-[14px]">All ingredient fields must be filled up.</p>
+                } @else if (form.get('ingredients')?.hasError('required')) {
+                <p class="text-red-500 ml-4 max-h-[14px]">Ingredients cannot be empty.</p>
+                }
+            </div>
+            <br>
+            <div formArrayName="ingredients">
+                <table>
+                    @for (ing of ingredients.controls; let i = $index; track ing) {
+                    <tr class="flex items-center gap-2">
+                        <td class="w-5 text-gray-700 font-medium">{{ i + 1 }}.</td>
+                        <td><input id="ingredients" placeholder="1 cup Flour"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-300"
+                                [formControlName]="i"></td>
+                        <td>
+                            <div class="ms-2"><button type="button" (click)="removeIngField(i)"
+                                    class="w-8 h-8 justify-center bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition-all cursor-pointer">X</button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-3 flex flex-col sm:flex-row sm:items-baseline">
+            <label for="time" class="text-gray-700 sm:w-1/6 font-bold">Preparation Time (in minutes):</label>
+            <div class="w-full sm:w-1/12">
+                <input id="time" type="number" min="1" formControlName="preparationTime" placeholder="60"
+                    class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            @if (formCtrlInvalid('preparationTime')) {
+            <p class="text-red-500 ml-4 max-h-[14px]">Preparation time is mandatory</p>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label for="summary" class="block text-gray-700 mb-2 font-bold">Summary:</label>
+            <textarea formControlName="summary" rows="2" placeholder="Brief Description of dish"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            @if (formCtrlInvalid('summary')) {
+            <p class="text-red-500 max-h-[14px]">Summary is mandatory</p>
+            }
+        </div>
+
+        <div class="mb-3">
+            <div class="flex items-baseline gap-4">
+                <label for="instructions" class="text-gray-700 sm:w-24 font-bold">Instructions:</label>
+                <button type="button" (click)="addInsField()"
+                    class="gap-2 px-4 py-2 text-white bg-green-600 hover:bg-green-700 cursor-pointer add-btn">
+                    <i class="bi bi-plus-circle"></i> Add More Instructions
+                </button>
+                @if (insInvalid()) {
+                <p class="text-red-500 max-h-[14px]">All instruction fields must be filled up.</p>
+                } @else if (form.get('instructions')?.hasError('required')) {
+                <p class="text-red-500 max-h-[14px]">Instructions cannot be empty.</p>
+                }
+            </div>
+            <br>
+            <div formArrayName="instructions" cdkDropList [cdkDropListData]="instructions.controls"
+                (cdkDropListDropped)="drop($event)" class="space-y-4">
+                @for (ins of instructions.controls; let i = $index; track ins) {
+                <div cdkDrag class="drag-item flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <p>{{ i + 1 }}.</p>
+                    </div>
+                    <div class="flex-grow">
+                        <textarea id="instructions" placeholder="Add all ingredients into a bowl and mix thoroughly"
+                            class="w-full px-3 py-2 border border-gray-300 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            [formControlName]="i" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <button type="button" (click)="removeInsField(i)"
+                            class="w-8 h-8 justify-center bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition-all cursor-pointer">X</button>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="mb-3 flex flex-col sm:flex-row sm:items-baseline font-bold">
+            <label for="calories" class="text-gray-700 sm:w-1/7">Calories (kcal):</label>
+            <div class="w-full sm:w-1/12">
+                <input id="calories" type="number" min="1" formControlName="calories" placeholder="500"
+                    class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex items-baseline mt-2 sm:mt-0 sm:ml-2">
+                <button type="button"
+                    class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 focus:outline-none cursor-pointer disabled:bg-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+                    (click)="askAI()" [disabled]="isLoading || coolDownActive">
+                    <i class="bi bi-robot"></i> Ask AI
+                </button>
+                @if (coolDownActive) {
+                <span class="text-sm text-gray-500 ml-2">
+                    (Wait {{ coolDownTime }}s)
+                </span>
+                }
+                @if (isLoading) {
+                <div class="spinner ml-2"></div>
+                }
+                @if (errorMessage != '') {
+                <div class="text-red-500 max-h-[14px] ml-2">{{ errorMessage }}</div>
+                } @else {
+                <div class="ml-2">Note: Ensure that title, serving size, ingredients and instructions are filled before
+                    querying AI.</div>
+                }
+            </div>
+            @if (formCtrlInvalid('calories')) {
+            <p class="text-red-500 max-h-[14px] ml-1">Calories is mandatory</p>
+            }
+        </div>
+
+        <div class="mb-3 flex flex-col sm:flex-row sm:items-baseline">
+            <label for="image" class="text-gray-700 sm:w-1/7 font-bold">Upload Image:</label><br>
+            <div class="w-full sm:w-1/4 flex items-baseline">
+                <label for="image-upload"
+                    class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out text-center">
+                    Choose Image
+                </label>
+                <input class="hidden" type="file" id="image-upload" name="image" accept=".jpg, .jpeg, .png"
+                    (change)="onFileChange($event)" #file>
+                <div id="file-name" class="text-gray-500 text-center ml-2">{{ fileName }}</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex items-baseline space-x-2">
+                <input class="form-checkbox text-blue-500 focus:ring-2 focus:ring-blue-500" type="checkbox"
+                    formControlName="consent">
+                <label class="text-gray-700">
+                    <strong>I hereby acknowledge and agree that upon submitting my recipe, I will relinquish the ability
+                        to modify or delete the submitted recipe unless approved by the website moderators.</strong>
+                </label>
+            </div>
+            @if (formCtrlInvalid('consent')) {
+            <p class="text-red-500 max-h-[14px]">Consent is mandatory</p>
+            }
+        </div>
+
+        <br>
+
+        <button type="submit"
+            class="gap-2 px-4 py-2 text-white bg-green-600 hover:bg-green-700 cursor-pointer add-btn disabled:bg-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+            [disabled]="disableSubmit()">Submit</button>
+
+    </form>
+</div>

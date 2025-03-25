@@ -1,0 +1,232 @@
+<div class="container mx-auto p-6">
+  <!-- Title for the Date -->
+  <div class="text-center mb-6">
+    <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      Calorie Tracker - {{ selectedDate | date:'dd MMMM YYYY' }}
+    </h1>
+  </div>
+
+
+
+  <!-- Gauge Bar for Calories Remaining -->
+  <div class="bg-white shadow-xl rounded-2xl p-6 mb-6 transition-transform duration-300 hover:scale-103">
+    <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      Daily Calorie Intake
+    </h2>
+
+    <!-- Slider for Customizing Calorie Goal -->
+    <div class="mb-4">
+      <label for="calorie-goal-slider" class="block text-sm font-medium text-gray-700">
+        Customize Daily Calorie Goal: {{ dailyCalorieGoal }} calories
+      </label>
+      <input id="calorie-goal-slider" type="range" min="1000" max="4000" step="50" [value]="dailyCalorieGoal"
+        (input)="onCalorieGoalChange($event)"
+        class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" />
+    </div>
+
+    <div class="w-full bg-gray-200 rounded-full h-4">
+      <div class="h-4 rounded-full transition-all duration-500"
+        [style.width.%]="caloriesPercentage > 100 ? 100 : caloriesPercentage"
+        [ngClass]="{'bg-green-600': caloriesPercentage < 80, 'bg-amber-500': caloriesPercentage < 100, 'bg-red-600' : caloriesPercentage >= 100}">
+      </div>
+    </div>
+    <p class="mt-2 text-sm text-gray-600">
+      {{ totalCalories }} / {{ dailyCalorieGoal }} calories consumed
+    </p>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Left Column: Timeline of Meals -->
+
+    <!-- Timeline of Meals -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 transition-transform duration-300 hover:scale-103">
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        Meal History
+      </h2>
+      <div class="timeline-container" style="max-height: 400px; overflow-y: auto;">
+        @if (filteredLogs) {
+        @if (filteredLogs.length > 0) {
+        <ol class="relative border-s-2 border-gradient-to-b from-blue-600 to-purple-600">
+          @for (log of filteredLogs; track $index) {
+          <li class="mb-10 ms-4 flex justify-between items-center group" @mealAnimation>
+            <!-- Left-aligned content -->
+            <div class="flex-1">
+              <div
+                class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700">
+              </div>
+              <time class="mb-1 text-sm font-normal leading-none text-gray-500">
+                {{ log.meal | titlecase }}
+              </time>
+              <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                {{ log.name }}
+              </h3>
+              <p class="mb-4 text-base font-normal text-gray-500">
+                Calories: {{ log.calories }}
+              </p>
+            </div>
+            <!-- Right-aligned delete button -->
+            <button (click)="deleteLog(log)"
+              class="mr-4 p-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full hover:from-red-600 hover:to-pink-600 focus:outline-none transition-all duration-300">
+              <i class="bi bi-trash"></i>
+            </button>
+          </li>
+          }
+        </ol>
+        } @else {
+        <div class="text-center text-gray-500">
+          <p>No meals recorded for this date.</p>
+        </div>
+        }
+        }
+      </div>
+    </div>
+
+    <!-- Right Column: Calendar -->
+    <div class="bg-white shadow-lg rounded-lg p-6 transition-transform duration-300 hover:scale-103">
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        Calendar</h2>
+      <div id="datepicker-inline" class="flex justify-center"></div>
+    </div>
+  </div>
+
+  <!-- Form and AI Section Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <!-- Form to Upload Meals -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 transition-transform duration-300 hover:scale-103">
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        Upload Meal for {{ selectedDate | date:'dd MMM YYYY' }}
+      </h2>
+
+      <form [formGroup]="mealForm" (submit)="onMealUpload()">
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-medium text-gray-700">Dish Name</label>
+          <input id="name" formControlName="name" placeholder="Name of dish"
+            class="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+          <label for="meal" class="block text-sm font-medium text-gray-700">Meal Type</label>
+          <select id="meal" formControlName="meal"
+            class="mt-1 block px-3 py-2 border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled selected>Select meal type</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="teabreak">Tea Break</option>
+            <option value="supper">Supper</option>
+            <option value="snack">Snack</option>
+            <option value="others">Others</option>
+          </select>
+          @if (mealForm.get('mealType')?.invalid && mealForm.get('mealType')?.touched) {
+          <div class="text-red-500 text-sm mt-1">
+            Meal type is required.
+          </div>
+          }
+        </div>
+
+        <!-- Manual Calorie Input -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">Calories</label>
+          <input type="number" formControlName="calories"
+            class="mt-1 block px-3 py-2 border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter calories" />
+          @if (mealForm.get('calories')?.invalid && mealForm.get('calories')?.touched) {
+          <div class="text-red-500 text-sm mt-1">
+            Calories are required and must be a positive number.
+          </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+          class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer disabled:bg-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+          [disabled]="mealForm.invalid">
+          Upload Meal
+        </button>
+      </form>
+    </div>
+
+    <!-- AI to Guess Calories Section -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 transition-transform duration-300 hover:scale-103">
+      <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        Need help with estimating calories? Upload your food image and ask AI.
+      </h2>
+      <div class="mb-4">
+        <!-- File Upload Label and Input -->
+        <label for="ai-image-upload"
+          class="flex items-center px-3 py-3 mx-auto text-center bg-white border-2 border-dashed rounded-lg cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300 dark:text-gray-500" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <h2 class="mx-3 text-gray-700">{{ aiFileName || 'Upload Image' }}</h2>
+          <input id="ai-image-upload" type="file" class="hidden" accept=".jpg, .jpeg, .png"
+            (change)="onAIImageChange($event)" #aiFile>
+        </label>
+
+        <!-- Ask AI Button -->
+        <div class="flex items-baseline mt-2 sm:mt-0 sm:ml-2">
+          <button type="button"
+            class="mt-4 bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 focus:outline-none cursor-pointer disabled:bg-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+            (click)="guessCalories()" [disabled]="isLoading || coolDownActive || !this.selectedFile">
+            <i class="bi bi-robot"></i> Ask AI
+          </button>
+
+          @if (coolDownActive) {
+          <span class="text-sm text-gray-500 ml-2">
+            (Wait {{ coolDownTime }}s)
+          </span>
+          }
+          @if (isLoading) {
+          <div class="spinner ml-2"></div>
+          }
+          @if (errorMessage != '') {
+          <div class="text-red-500 max-h-[14px] ml-2">{{ errorMessage }}</div>
+          } @else {
+          <div class="ml-2">Note: Ensure that image is uploaded first.</div>
+          }
+        </div>
+
+        <!-- Image Preview and Delete Button -->
+        @if (imagePreview) {
+        <div class="mt-4 p-4 rounded-lg relative">
+          <div class="relative inline-block">
+            <img [src]="imagePreview" alt="Preview" class="mt-2 w-32 h-32 object-cover rounded-lg shadow-md" />
+            <!-- Delete Button -->
+            <button (click)="clearFile()"
+              class="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full transform translate-x-1/2 -translate-y-1/2 hover:bg-red-600 focus:outline-none cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        }
+
+      </div>
+
+    </div>
+
+    @if (showPopup) {
+    <app-popup [message]="popupMessage" (close)="onPopupClose()">
+      @if (addCalorie > 0) {
+      <button class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 cursor-pointer"
+        (click)="addCalorieToForm()">Add {{ addCalorie }} calories to form</button>
+      }
+    </app-popup>
+    }
+  </div>
+
+
+
+  <!-- Calorie Trends Chart -->
+  <div class="bg-white shadow-xl rounded-2xl p-6 mt-6 transition-transform duration-300 hover:scale-103">
+    <h2 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      Calorie Trend
+    </h2>
+    <canvas id="calorieChart"></canvas>
+  </div>
+</div>

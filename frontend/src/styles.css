@@ -1,0 +1,12 @@
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+@import "tailwindcss";
+
+.quicksand-font {
+    font-family: 'Quicksand', sans-serif;
+  }
+
+html {
+  scroll-behavior: smooth;
+}
