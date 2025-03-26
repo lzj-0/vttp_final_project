@@ -5,7 +5,7 @@ import { AuthService } from '../../service/auth.service';
 import { RecipeDetail } from '../../model/RecipeDetail';
 import { User } from '../../model/User';
 import { AuthStore } from '../../store/AuthStore';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -40,34 +40,39 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
   recipeSub$!: Subscription;
   gatekeepSub$!: Subscription;
   privateSub$!: Subscription;
+  sub$!: Subscription;
 
   ngOnInit(): void {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        const navigation = this.router.getCurrentNavigation();
-        if (navigation?.extras.state) {
-          const expActivity = navigation.extras.state['expActivity'];
-          console.log('expActivity:', expActivity);
-          if (expActivity) {
-            console.log("showing exp alert");
-            this.showExpAlert(expActivity);
-          }
+    // this.router.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd) {
+    //     const navigation = this.router.getCurrentNavigation();
+    //     if (navigation?.extras.state) {
+    //       const expActivity = navigation.extras.state['expActivity'];
+    //       console.log('expActivity:', expActivity);
+    //       if (expActivity) {
+    //         console.log("showing exp alert");
+    //         this.showExpAlert(expActivity);
+    //       }
+    //     }
+    //   }
+    // });
+
+    this.sub$ = this.route.paramMap.subscribe(
+        params => {
+          this.recipeId = params.get("id");
+          this.loadRecipeDetails();
         }
-      }
-    });
-
-    this.recipeId = this.route.snapshot.paramMap.get('id');
-    this.loadRecipeDetails();
+      );
   }
 
-  showExpAlert(expActivity: any) {
-    console.log("in showExpAlert");
-    this.expAlertMessage = `You earned ${expActivity.expAwarded} exp!`;
+  // showExpAlert(expActivity: any) {
+  //   console.log("in showExpAlert");
+  //   this.expAlertMessage = `You earned ${expActivity.expAwarded} exp!`;
 
-    setTimeout(() => {
-      this.expAlertMessage = null;
-    }, 5000);
-  }
+  //   setTimeout(() => {
+  //     this.expAlertMessage = null;
+  //   }, 5000);
+  // }
 
   clearExpAlert() {
     this.expAlertMessage = null;
@@ -78,15 +83,17 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.recipeDetail = data.recipe;
         this.userDetail = data.owner;
-        this.loggedInUser = this.authStore.getState().user;
-        this.isOwner = this.loggedInUser?.id === this.userDetail.id;
-        console.log(this.isOwner);
-
-        this.isRestricted = this.isRecipeRestricted(this.recipeDetail);
-
-        if (this.isRestricted || (this.recipeDetail.isPrivate && !this.isOwner)) {
-          this.router.navigate(['/recipes']);
-        }
+        this.authStore.user$.subscribe(
+          (data) => {
+            this.loggedInUser = data;
+            this.isOwner = this.loggedInUser?.id === this.userDetail.id;
+    
+            this.isRestricted = this.isRecipeRestricted(this.recipeDetail);
+    
+            if (this.isRestricted || (this.recipeDetail.isPrivate && !this.isOwner)) {
+              this.router.navigate(['/recipes']);
+            }
+          });
       },
       error: (error) => this.router.navigate(['/recipes']),
       complete: () => this.recipeSub$.unsubscribe()
@@ -104,7 +111,7 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
       return !isOwner && !hasPremium && !isSameOrHigherTier;
     }
 
-    return true;
+    return false;
   }
 
   toggleStep(index: number) {
@@ -146,7 +153,8 @@ export class RecipeDetailComponent implements OnInit, OnDestroy {
     this.recipeService.addRecipeView(this.recipeId).subscribe({
       next: (data) => console.log(data),
       error: (error) => console.log(error)
-    })
+    });
+    this.sub$.unsubscribe();
   }
 
   reloadRecipe() {

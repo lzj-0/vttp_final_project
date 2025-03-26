@@ -94,6 +94,7 @@
                                             'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
                                             'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
                                             'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                            'glow-diamond': recipe.ownerTier === 'Diamond'
                                           }">
                                     <img class="lg:h-60 md:h-36 w-full object-cover object-center"
                                         [src]="recipe.imageUrl" alt="blog">
@@ -151,6 +152,7 @@
                                                 'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
                                                 'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
                                                 'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                                'glow-diamond': recipe.ownerTier === 'Diamond'
                                               }">
                                     <img class="lg:h-60 md:h-36 w-full object-cover object-center"
                                         [src]="recipe.imageUrl" alt="blog">
@@ -235,6 +237,7 @@
                                                 'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
                                                 'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
                                                 'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                                'glow-diamond': recipe.ownerTier === 'Diamond'
                                               }">
                                     <img class="lg:h-60 md:h-36 w-full object-cover object-center"
                                         [src]="recipe.imageUrl" alt="blog">
@@ -292,6 +295,7 @@
                                                 'cursor-pointer' : !(isRecipeRestricted(recipe) && !isOwner(recipe)),
                                                 'cursor-not-allowed': isRecipeRestricted(recipe) && !isOwner(recipe),
                                                 'grayscale': isRecipeRestricted(recipe) && !isOwner(recipe),
+                                                'glow-diamond': recipe.ownerTier === 'Diamond'
                                               }">
                                     <img class="lg:h-60 md:h-36 w-full object-cover object-center"
                                         [src]="recipe.imageUrl" alt="blog">

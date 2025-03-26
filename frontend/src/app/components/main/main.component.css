@@ -60,3 +60,24 @@
 .recipe-container {
   min-height: 400px;
 }
+
+@keyframes pulsate-diamond {
+  0% {
+    box-shadow:
+      0 0 10px 3px rgba(185, 242, 255, 0.9),
+  }
+
+  50% {
+    box-shadow:
+      0 0 20px 6px rgba(185, 242, 255, 1),
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px 3px rgba(185, 242, 255, 0.9),
+  }
+}
+
+.glow-diamond {
+  animation: pulsate-diamond 3s infinite;
+}
