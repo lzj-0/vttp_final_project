@@ -57,21 +57,28 @@ Stay healthy with our AI-powered calorie tracker. Simply upload a food image, an
 
 ### Recipes That Are Not Gatekept
 
-These recipes allow all users to earn **experience (EXP)** by interacting with them.
+These recipes allow all users to earn experience (EXP) by interacting with them. The Gain 100 Views on Your Recipe action rewards the owner of the recipe with EXP for every 100 views.
 
-| Tier | Action | Experience Awarded |
-|------|--------|---------------------|
-| All | Upload Recipe | 50 EXP |
-| All | Try Recipe | 20 EXP |
-| All | Give Review | 10 EXP |
-| All | Gain 100 Views | 5 EXP |
+| Tier | Action                           | EXP  |
+|------|----------------------------------|-----:|
+| All  | Review a Recipe                  |   15 |
+| All  | Gain 100 Views on Your Recipe    |   20 |
+| All  | Try Cooking with a Recipe        |   80 |
+| All  | Upload a Recipe                  |  100 |
+| All  | Be in Top 10 Weekly Leaderboard  |  200 |
 
 ### Gatekeep Recipes
 
 These recipes allow the **owner** to earn **credits and EXP** when other users interact with them.
 
-| Tier | Action | Experience Awarded | Credits Awarded |
-|------|--------|---------------------|------------------|
-| Silver | Try Gatekept Recipe | 15 EXP | 2 Credits |
-| Gold | View Gatekept Recipe | 10 EXP | 1 Credit |
-| Diamond | Review Gatekept Recipe | 20 EXP | 3 Credits |
+| Tier    | Action                           | EXP  | Credits |
+|---------|----------------------------------|-----:|--------:|
+| Silver  | Someone Reviews Your Recipe      |    0 |       3 |
+| Silver  | Someone Tries Cooking with Your Recipe | 60 |      10 |
+| Silver  | Gain 100 Views on Your Recipe    |   10 |       5 |
+| Gold    | Someone Reviews Your Recipe      |    0 |       3 |
+| Gold    | Someone Tries Cooking with Your Recipe | 40 |      20 |
+| Gold    | Gain 100 Views on Your Recipe    |   10 |      10 |
+| Diamond | Someone Reviews Your Recipe      |    0 |       6 |
+| Diamond | Someone Tries Cooking with Your Recipe | 40 |      30 |
+| Diamond | Gain 100 Views on Your Recipe    |   10 |      20 |
