@@ -8,4 +8,4 @@ The platform combines culinary exploration with cutting-edge technology. Its AI 
 
 What sets Flavour Foundry apart is its dual focus on community and monetisation. Users don't just share recipes - they build culinary reputations, earn passive income from popular recipes, and compete for top spots in the experience-based ranking system. The tiered structure creates compelling progression, where achieving Silver tier (Level 10) unlocks money-making opportunities, while Diamond status (Level 30) grants exclusive content control. Additional features like Ethereum donations and subscription plans further enhance earning potential, making this a unique hybrid of cooking platform and side-hustle ecosystem.
 
-For more detailed information on the gamified system, refer to 
+For more detailed information on the gamified system, refer to frontend/src/app/components/tutorial
